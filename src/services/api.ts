@@ -46,7 +46,7 @@ export const apiService = {
       try {
         const errorData = await response.json() as ErrorResponse;
         throw new Error(`API error: ${response.status} ${response.statusText} - ${errorData.message || JSON.stringify(errorData)}`);
-      } catch (_) {
+      } catch {
         // Fallback if error response is not JSON
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }

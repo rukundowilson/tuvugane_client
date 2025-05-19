@@ -1,5 +1,5 @@
 "use client"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { apiService } from '@/services/api';
@@ -15,7 +15,8 @@ interface Category {
   name: string;
 }
 
-const SubmitComplaint: React.FC = () => {
+// Client component that uses search params
+function ComplaintForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   
@@ -76,7 +77,7 @@ const SubmitComplaint: React.FC = () => {
         const data = await apiService.get<Agency[]>('/agencies', token);
         setAgencies(data);
         setFilteredAgencies(data); // Initialize filtered agencies with all agencies
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to load agencies:', err);
         setError('Failed to load agencies. Please try again later.');
       } finally {
@@ -90,7 +91,7 @@ const SubmitComplaint: React.FC = () => {
         setLoadingCategories(true);
         const response = await apiService.get<{ success: boolean; data: Category[] }>('/categories');
         setCategories(response.data);
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error('Failed to load categories:', err);
         setError('Failed to load categories. Please try again later.');
       } finally {
@@ -486,6 +487,15 @@ const SubmitComplaint: React.FC = () => {
         </form>
       </div>
     </div>
+  );
+}
+
+// Main component with Suspense boundary
+const SubmitComplaint: React.FC = () => {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-gray-50 flex items-center justify-center p-4">Loading...</div>}>
+      <ComplaintForm />
+    </Suspense>
   );
 };
 

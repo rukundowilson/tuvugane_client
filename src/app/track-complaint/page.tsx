@@ -27,10 +27,6 @@ interface Ticket {
   responses: TicketResponse[];
 }
 
-interface ErrorWithMessage {
-  message: string;
-}
-
 const TrackComplaintPage: React.FC = () => {
   const [ticketId, setTicketId] = useState('');
   const [loading, setLoading] = useState(false);
