@@ -70,8 +70,8 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
 
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.message || 'Failed to create admin. Please try again.');
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Failed to create admin. Please try again.');
       console.error(err);
     } finally {
       setLoading(false);

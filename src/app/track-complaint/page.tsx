@@ -27,6 +27,10 @@ interface Ticket {
   responses: TicketResponse[];
 }
 
+interface ErrorWithMessage {
+  message: string;
+}
+
 const TrackComplaintPage: React.FC = () => {
   const [ticketId, setTicketId] = useState('');
   const [loading, setLoading] = useState(false);
@@ -64,9 +68,10 @@ const TrackComplaintPage: React.FC = () => {
         responses: responsesData || []
       });
       
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error fetching ticket:', err);
-      setError(err.message || 'Failed to retrieve complaint information');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to retrieve complaint information';
+      setError(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -86,7 +91,7 @@ const TrackComplaintPage: React.FC = () => {
       await apiService.post(`/tickets/public/${ticket.ticket_id}/feedback`, { message: feedback.trim() });
       setFeedbackSubmitted(true);
       setFeedback('');
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error('Error submitting feedback:', err);
       setError('Failed to submit feedback. Please try again.');
     } finally {

@@ -1,5 +1,9 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://tuvugane-server.onrender.com/api';
 
+interface ErrorResponse {
+  message?: string;
+}
+
 export const apiService = {
   async get<T>(endpoint: string, token?: string): Promise<T> {
     const headers: Record<string, string> = {
@@ -22,7 +26,7 @@ export const apiService = {
     return response.json() as Promise<T>;
   },
 
-  async post<T>(endpoint: string, data: any, token?: string): Promise<T> {
+  async post<T, D = Record<string, unknown>>(endpoint: string, data: D, token?: string): Promise<T> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
@@ -40,9 +44,9 @@ export const apiService = {
     if (!response.ok) {
       // Try to get detailed error information
       try {
-        const errorData = await response.json();
+        const errorData = await response.json() as ErrorResponse;
         throw new Error(`API error: ${response.status} ${response.statusText} - ${errorData.message || JSON.stringify(errorData)}`);
-      } catch (jsonError) {
+      } catch (_) {
         // Fallback if error response is not JSON
         throw new Error(`API error: ${response.status} ${response.statusText}`);
       }
@@ -51,7 +55,7 @@ export const apiService = {
     return response.json() as Promise<T>;
   },
 
-  async put<T>(endpoint: string, data: any, token?: string): Promise<T> {
+  async put<T, D = Record<string, unknown>>(endpoint: string, data: D, token?: string): Promise<T> {
     const headers: Record<string, string> = {
       'Content-Type': 'application/json',
     };
