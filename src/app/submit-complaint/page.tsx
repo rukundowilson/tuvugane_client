@@ -220,17 +220,16 @@ function ComplaintForm() {
         formDataToSend.append('is_anonymous', String(user.is_anonymous || false));
       }
       
-      const response = await fetch('http://localhost:5000/api/tickets', {
-        method: 'POST',
-        body: formDataToSend
-      });
+      // Get token if user is logged in
+      const token = user ? apiService.getAuthToken() : undefined;
       
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Submission failed');
-      }
+      // Use API service for consistent URL handling
+      const data = await apiService.postFormData<{ complaintId: string }>(
+        '/tickets',
+        formDataToSend,
+        token || undefined
+      );
       
-      const data = await response.json();
       setComplaintId(data.complaintId);
       setSuccess(true);
     } catch (err: any) {

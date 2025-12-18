@@ -81,13 +81,13 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-        <div className="flex justify-between items-center pb-3">
-          <h3 className="text-xl font-semibold text-gray-900">Create Admin for {institutionName}</h3>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+      <div className="relative mx-auto w-full max-w-md shadow-lg rounded-md bg-white animate-modal-appear">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Create Admin for {institutionName}</h3>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 focus:outline-none"
+            className="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -177,11 +177,11 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
             <button
               type="submit"
               disabled={loading}
-              className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${
+              className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
                 loading ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
-              {loading ? 'Creating...' : 'Create Admin'}
+              <span className="text-white">{loading ? 'Creating...' : 'Create Admin'}</span>
             </button>
           </div>
         </form>

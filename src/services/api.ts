@@ -1,101 +1,165 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://tuvugane-server.onrender.com/api';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
+
+// Use localhost:5000/api in development, otherwise use environment variable or production URL
+const getApiBaseUrl = (): string => {
+  // Check if we're in development mode
+  if (process.env.NODE_ENV === 'development') {
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api';
+  }
+  // Production mode - use environment variable or fallback to production URL
+  return process.env.NEXT_PUBLIC_API_URL || 'https://tuvugane-server.onrender.com/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 interface ErrorResponse {
   message?: string;
 }
 
-export const apiService = {
-  async get<T>(endpoint: string, token?: string): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
-
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'GET',
-      headers,
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json() as Promise<T>;
+// Create axios instance with default configuration
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
   },
+  timeout: 30000, // 30 seconds timeout
+});
 
-  async post<T, D = Record<string, unknown>>(endpoint: string, data: D, token?: string): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
-    };
+// Request interceptor to add auth token automatically
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Get token from localStorage if available
+    if (typeof window !== 'undefined') {
+      const token =
+        localStorage.getItem('adminToken') ||
+        localStorage.getItem('superAdminToken') ||
+        localStorage.getItem('userToken') ||
+        localStorage.getItem('agencyToken');
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'POST',
-      headers,
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      // Try to get detailed error information
-      try {
-        const errorData = await response.json() as ErrorResponse;
-        throw new Error(`API error: ${response.status} ${response.statusText} - ${errorData.message || JSON.stringify(errorData)}`);
-      } catch {
-        // Fallback if error response is not JSON
-        throw new Error(`API error: ${response.status} ${response.statusText}`);
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
       }
     }
-
-    return response.json() as Promise<T>;
+    return config;
   },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
 
-  async put<T, D = Record<string, unknown>>(endpoint: string, data: D, token?: string): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+// Response interceptor for error handling
+axiosInstance.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error: AxiosError<ErrorResponse>) => {
+    // Handle common error cases
+    if (error.response) {
+      // Server responded with error status
+      const message = error.response.data?.message || error.message;
+      const status = error.response.status;
+      
+      // Handle 401 Unauthorized - clear tokens and redirect
+      if (status === 401 && typeof window !== 'undefined') {
+        localStorage.removeItem('adminToken');
+        localStorage.removeItem('superAdminToken');
+        localStorage.removeItem('userToken');
+        localStorage.removeItem('agencyToken');
+        localStorage.removeItem('userData');
+      }
+      
+      throw new Error(`API error: ${status} ${error.response.statusText} - ${message}`);
+    } else if (error.request) {
+      // Request was made but no response received
+      throw new Error('Network error: No response from server');
+    } else {
+      // Something else happened
+      throw new Error(error.message || 'An unexpected error occurred');
+    }
+  }
+);
+
+export const apiService = {
+  async get<T>(endpoint: string, token?: string, config?: AxiosRequestConfig): Promise<T> {
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify(data),
-    });
-
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json() as Promise<T>;
+    const response = await axiosInstance.get<T>(endpoint, requestConfig);
+    return response.data;
   },
 
-  async delete<T>(endpoint: string, token?: string): Promise<T> {
-    const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+  async post<T, D = Record<string, unknown>>(
+    endpoint: string,
+    data?: D,
+    token?: string,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
     };
 
-    if (token) {
-      headers['Authorization'] = `Bearer ${token}`;
-    }
+    const response = await axiosInstance.post<T>(endpoint, data, requestConfig);
+    return response.data;
+  },
 
-    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: 'DELETE',
-      headers,
-    });
+  async put<T, D = Record<string, unknown>>(
+    endpoint: string,
+    data?: D,
+    token?: string,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    };
 
-    if (!response.ok) {
-      throw new Error(`API error: ${response.status} ${response.statusText}`);
-    }
+    const response = await axiosInstance.put<T>(endpoint, data, requestConfig);
+    return response.data;
+  },
 
-    return response.json() as Promise<T>;
+  async delete<T>(endpoint: string, token?: string, config?: AxiosRequestConfig): Promise<T> {
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        ...config?.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    };
+
+    const response = await axiosInstance.delete<T>(endpoint, requestConfig);
+    return response.data;
+  },
+
+  // Method for file uploads (FormData)
+  async postFormData<T>(
+    endpoint: string,
+    formData: FormData,
+    token?: string,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const requestConfig: AxiosRequestConfig = {
+      ...config,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+        ...config?.headers,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      },
+    };
+
+    const response = await axiosInstance.post<T>(endpoint, formData, requestConfig);
+    return response.data;
   },
 
   // Helper method to get stored authentication token
@@ -109,5 +173,10 @@ export const apiService = {
       );
     }
     return null;
-  }
+  },
+
+  // Get the axios instance for advanced usage
+  getAxiosInstance(): AxiosInstance {
+    return axiosInstance;
+  },
 }; 

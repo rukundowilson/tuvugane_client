@@ -98,13 +98,13 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
-        <div className="flex justify-between items-center pb-3">
-          <h3 className="text-xl font-semibold text-gray-900">Create Admin for {agencyName}</h3>
+    <div className="fixed inset-0 bg-gray-900 bg-opacity-50 overflow-y-auto h-full w-full z-50 flex items-center justify-center p-4">
+      <div className="relative mx-auto w-full max-w-md shadow-lg rounded-md bg-white animate-modal-appear">
+        <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">Create Admin for {agencyName}</h3>
           <button 
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-500 focus:outline-none"
+            className="text-gray-400 hover:text-gray-500 focus:outline-none transition-colors"
           >
             <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -130,7 +130,7 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
               required
               value={formData.name}
               onChange={handleChange}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Full Name"
             />
           </div>
@@ -146,7 +146,7 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
               required
               value={formData.email}
               onChange={handleChange}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Email address"
             />
           </div>
@@ -162,7 +162,7 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
               required
               value={formData.password}
               onChange={handleChange}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Password"
             />
           </div>
@@ -178,7 +178,7 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
               placeholder="Confirm password"
             />
           </div>
@@ -187,18 +187,18 @@ const AdminCreationModal: React.FC<AdminCreationModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="bg-green-600 py-2 px-4 border border-green-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+              className="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 ${
+              className={`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${
                 loading ? 'opacity-75 cursor-not-allowed' : ''
               }`}
             >
-              {loading ? 'Creating...' : 'Create Admin'}
+              <span className="text-white">{loading ? 'Creating...' : 'Create Admin'}</span>
             </button>
           </div>
         </form>
@@ -286,10 +286,10 @@ export default function AgencyAdminsPage({ params }: { params: Promise<{ id: str
         </p>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
         >
           <svg
-            className="-ml-1 mr-2 h-5 w-5"
+            className="-ml-1 mr-2 h-5 w-5 text-white"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -301,7 +301,7 @@ export default function AgencyAdminsPage({ params }: { params: Promise<{ id: str
               clipRule="evenodd"
             />
           </svg>
-          Create Admin
+          <span className="text-white">Create Admin</span>
         </button>
       </div>
       
@@ -333,7 +333,7 @@ export default function AgencyAdminsPage({ params }: { params: Promise<{ id: str
         {loading ? (
           <div className="py-12">
             <div className="flex justify-center items-center">
-              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-600"></div>
             </div>
             <p className="text-center mt-4 text-gray-500">Loading admins...</p>
           </div>

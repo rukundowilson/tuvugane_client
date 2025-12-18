@@ -70,10 +70,10 @@ const AgenciesManagement: React.FC = () => {
         <h1 className="text-2xl font-bold text-gray-900">Government Agencies</h1>
         <button
           onClick={() => setIsModalOpen(true)}
-          className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
+          className="mt-4 sm:mt-0 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
         >
           <svg
-            className="-ml-1 mr-2 h-5 w-5"
+            className="-ml-1 mr-2 h-5 w-5 text-white"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
             fill="currentColor"
@@ -85,7 +85,7 @@ const AgenciesManagement: React.FC = () => {
               clipRule="evenodd"
             />
           </svg>
-          Create Agency
+          <span className="text-white">Create Agency</span>
         </button>
       </div>
       
@@ -167,7 +167,7 @@ const AgenciesManagement: React.FC = () => {
                 {agencies.map((agency) => (
                   <tr key={agency.agency_id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-primary-600">{agency.name}</div>
+                      <div className="text-sm font-medium text-blue-600">{agency.name}</div>
                       <div className="text-sm text-gray-500 truncate max-w-xs">
                         {agency.description || 'No description'}
                       </div>
@@ -182,7 +182,7 @@ const AgenciesManagement: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Link 
                         href={`/admin/dashboard/agencies/${agency.agency_id}/admins`}
-                        className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-primary-700 bg-primary-100 hover:bg-primary-200"
+                        className="inline-flex items-center px-2.5 py-1.5 border border-transparent text-xs font-medium rounded text-blue-700 bg-blue-100 hover:bg-blue-200"
                       >
                         View Admins
                       </Link>
